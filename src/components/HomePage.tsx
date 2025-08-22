@@ -11,13 +11,21 @@ import {
   Globe,
   Trophy,
   Lightbulb,
+  Phone,
+  Mail,
+  MapPin,
+  AlertCircle,
 } from "lucide-react"
+import heroImage from '../assets/hero.JPG'
+import { usePrimaryColegio } from '@/hooks/useColegio'
 
 interface HomePageProps {
   onShowEvents: () => void
 }
 
 export default function HomePage({ onShowEvents }: HomePageProps) {
+  const { colegio, loading, error } = usePrimaryColegio();
+
   const activities = [
     {
       icon: Palette,
@@ -83,13 +91,22 @@ export default function HomePage({ onShowEvents }: HomePageProps) {
   return (
     <>
       {/* Hero Section */}
-      <section className="relative py-20 lg:py-32 overflow-hidden">
-        {/* Background with animated bubbles */}
-        <div className="absolute inset-0 bg-gradient-to-br from-muted via-background to-card">
+      <section className="relative py-32 lg:py-48 overflow-hidden">
+        {/* Background with hero image and overlay */}
+        <div 
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+          style={{ backgroundImage: `url(${heroImage})` }}
+        >
+          {/* Dark overlay for better text readability */}
+          <div className="absolute inset-0 bg-black/40"></div>
+        </div>
+        
+        {/* Animated bubbles */}
+        <div className="absolute inset-0">
           {[...Array(6)].map((_, i) => (
             <div
               key={i}
-              className="absolute w-4 h-4 bg-primary/20 rounded-full animate-bubble"
+              className="absolute w-4 h-4 bg-white/20 rounded-full animate-bubble"
               style={{
                 left: `${Math.random() * 100}%`,
                 animationDelay: `${i * 1.3}s`,
@@ -101,14 +118,28 @@ export default function HomePage({ onShowEvents }: HomePageProps) {
 
         <div className="container mx-auto px-4 relative z-10">
           <div className="max-w-4xl mx-auto text-center">
-            <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-6 leading-tight">
-              <span className="text-primary animate-float">Bienvenidos</span> <span className="text-secondary">a</span>
-              <br />
-              <span className="text-accent">Escuela</span> <span className="text-primary">Torreblanca</span>
-            </h1>
-            <p className="text-xl md:text-2xl text-muted-foreground mb-8 max-w-2xl mx-auto">
-              Educación de calidad en San Javier para el desarrollo del lenguaje en niños y niñas
-            </p>
+            {loading ? (
+              <div className="animate-pulse">
+                <div className="h-12 bg-white/20 rounded mb-6"></div>
+                <div className="h-6 bg-white/20 rounded mb-8 max-w-2xl mx-auto"></div>
+              </div>
+            ) : error ? (
+              <div className="flex items-center justify-center mb-6">
+                <AlertCircle className="w-6 h-6 text-red-400 mr-2" />
+                <span className="text-white">Error cargando información del colegio</span>
+              </div>
+            ) : (
+              <>
+                <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-6 leading-tight text-white drop-shadow-lg">
+                  <span className="text-white animate-float">Bienvenidos</span> <span className="text-white/90">a</span>
+                  <br />
+                  <span className="text-white">{colegio?.nombre || 'Escuela Torreblanca'}</span>
+                </h1>
+                <p className="text-xl md:text-2xl text-white/90 mb-8 max-w-2xl mx-auto drop-shadow">
+                  Educación de calidad en {colegio?.direccion || 'San Javier'} para el desarrollo del lenguaje en niños y niñas
+                </p>
+              </>
+            )}
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button size="lg" className="text-lg px-8 py-6 animate-pulse-glow">
                 Conoce Más
@@ -121,6 +152,48 @@ export default function HomePage({ onShowEvents }: HomePageProps) {
               >
                 Ver Eventos
               </Button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Nueva Sección con fondo blanco */}
+      <section className="py-16 bg-white">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">¿Por qué elegirnos?</h2>
+            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+              Somos más que una escuela, somos una comunidad comprometida con el desarrollo integral de cada niño
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="text-center">
+              <div className="w-16 h-16 mx-auto mb-4 bg-primary/10 rounded-full flex items-center justify-center">
+                <Users className="w-8 h-8 text-primary" />
+              </div>
+              <h3 className="text-xl font-semibold mb-2">Educación Personalizada</h3>
+              <p className="text-muted-foreground">
+                Atención individualizada para cada estudiante, respetando sus ritmos y necesidades
+              </p>
+            </div>
+            <div className="text-center">
+              <div className="w-16 h-16 mx-auto mb-4 bg-primary/10 rounded-full flex items-center justify-center">
+                <Trophy className="w-8 h-8 text-primary" />
+              </div>
+              <h3 className="text-xl font-semibold mb-2">Excelencia Académica</h3>
+              <p className="text-muted-foreground">
+                Programas educativos de alta calidad con énfasis en el desarrollo integral
+              </p>
+            </div>
+            <div className="text-center">
+              <div className="w-16 h-16 mx-auto mb-4 bg-primary/10 rounded-full flex items-center justify-center">
+                <Lightbulb className="w-8 h-8 text-primary" />
+              </div>
+              <h3 className="text-xl font-semibold mb-2">Innovación Constante</h3>
+              <p className="text-muted-foreground">
+                Metodologías modernas y actualizadas para un aprendizaje efectivo
+              </p>
             </div>
           </div>
         </div>
@@ -159,11 +232,19 @@ export default function HomePage({ onShowEvents }: HomePageProps) {
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div className="order-2 lg:order-1">
-              <img
-                src="/placeholder.svg?height=400&width=400"
-                alt="Niños aprendiendo"
-                className="w-full max-w-md mx-auto rounded-lg shadow-lg"
-              />
+              {colegio?.logo_url ? (
+                <img
+                  src={colegio.logo_url}
+                  alt={`Logo de ${colegio.nombre}`}
+                  className="w-full max-w-md mx-auto rounded-lg shadow-lg"
+                />
+              ) : (
+                <img
+                  src="/placeholder.svg?height=400&width=400"
+                  alt="Niños aprendiendo"
+                  className="w-full max-w-md mx-auto rounded-lg shadow-lg"
+                />
+              )}
             </div>
             <div className="order-1 lg:order-2">
               <h2 className="text-3xl md:text-4xl font-bold mb-6">Comunicados</h2>
@@ -179,6 +260,92 @@ export default function HomePage({ onShowEvents }: HomePageProps) {
           </div>
         </div>
       </section>
+
+      {/* Contact Information Section */}
+      {colegio && !loading && (
+        <section className="py-16 bg-card">
+          <div className="container mx-auto px-4">
+            <div className="text-center mb-12">
+              <h2 className="text-3xl md:text-4xl font-bold mb-4">Información de Contacto</h2>
+              <p className="text-xl text-muted-foreground">
+                Mantente en contacto con nuestra institución educativa
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
+              <Card className="text-center group hover:shadow-lg transition-all duration-300">
+                <CardHeader>
+                  <div className="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-primary to-accent rounded-full flex items-center justify-center group-hover:scale-110 transition-transform">
+                    <Phone className="w-8 h-8 text-primary-foreground" />
+                  </div>
+                  <CardTitle className="text-xl">Teléfono</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <CardDescription className="text-lg font-medium">
+                    {colegio.telefono}
+                  </CardDescription>
+                </CardContent>
+              </Card>
+
+              <Card className="text-center group hover:shadow-lg transition-all duration-300">
+                <CardHeader>
+                  <div className="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-secondary to-primary rounded-full flex items-center justify-center group-hover:scale-110 transition-transform">
+                    <Mail className="w-8 h-8 text-primary-foreground" />
+                  </div>
+                  <CardTitle className="text-xl">Email</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <CardDescription className="text-lg font-medium">
+                    <a 
+                      href={`mailto:${colegio.email}`}
+                      className="text-primary hover:underline"
+                    >
+                      {colegio.email}
+                    </a>
+                  </CardDescription>
+                </CardContent>
+              </Card>
+
+              <Card className="text-center group hover:shadow-lg transition-all duration-300">
+                <CardHeader>
+                  <div className="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-accent to-secondary rounded-full flex items-center justify-center group-hover:scale-110 transition-transform">
+                    <MapPin className="w-8 h-8 text-primary-foreground" />
+                  </div>
+                  <CardTitle className="text-xl">Dirección</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <CardDescription className="text-lg font-medium">
+                    {colegio.direccion}
+                    {colegio.region && (
+                      <>
+                        <br />
+                        <span className="text-sm text-muted-foreground">
+                          {colegio.region}, {colegio.pais}
+                        </span>
+                      </>
+                    )}
+                  </CardDescription>
+                </CardContent>
+              </Card>
+            </div>
+
+            {colegio.horario && (
+              <div className="text-center mt-8">
+                <Card className="max-w-md mx-auto">
+                  <CardHeader>
+                    <CardTitle className="text-xl">Horario de Atención</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <CardDescription className="text-lg font-medium">
+                      {colegio.horario}
+                    </CardDescription>
+                  </CardContent>
+                </Card>
+              </div>
+            )}
+          </div>
+        </section>
+      )}
 
       {/* Teachers Section */}
       <section className="py-16 bg-card">
