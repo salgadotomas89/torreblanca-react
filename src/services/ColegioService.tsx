@@ -20,7 +20,7 @@ export interface ColegioApiResponse {
 }
 
 // API Configuration
-const API_BASE_URL = '/api/colegio/';
+const API_BASE_URL = 'https://escuelatorreblanca.cl/api/colegio/';
 
 class ColegioService {
   /**
